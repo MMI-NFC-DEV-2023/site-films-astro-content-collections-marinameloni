@@ -1,5 +1,5 @@
 import { glob } from "astro/loaders";
-import { defineCollection, z } from "astro:content";
+import { defineCollection, reference, z } from "astro:content";
 
 const personne = defineCollection({
   loader: glob({ base: "src/data/personne", pattern: "**/*.md" }),
@@ -36,6 +36,7 @@ const film = defineCollection({
   schema: z.object({
     titre: z.string(),
     dateSortie: z.date(),
+    realisateur: reference("personne").optional(),
   }),
 })
 

@@ -1,0 +1,40 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import { formatDate } from "src/helpers";
+export async function getStaticPaths() {
+  const posts = await getCollection("film");
+  return posts.map((film) => ({
+    params: { id: film.id },
+    props: { film },
+  }));
+}
+
+const { film } = Astro.props;
+const { Content } = await render(film);
+---
+
+<Layout pageTitle="Détails du film">
+  <div class="prose lg:prose-xl mx-auto">
+    <h1 class="text-6xl font-bold mb-4">Fiche de {film.data.titre}</h1>
+    <p class="text-lg">
+      <span class="font-semibold">Titre</span>
+      {film.data.titre}
+    </p>
+
+    <p class="text-lg">
+      <span class="font-semibold">Date de sortie :</span>
+      {formatDate(film.data.dateSortie)}
+    </p>
+
+  <p class="text-lg">
+    <span class="font-semibold">Réalisateur</span>
+    {film.data.realisateur}
+  </p>
+    <div class="mt-6">
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </div>
+</Layout>
