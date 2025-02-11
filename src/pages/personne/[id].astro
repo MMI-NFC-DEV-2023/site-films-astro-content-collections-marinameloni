@@ -13,6 +13,9 @@ export async function getStaticPaths() {
 // 2. Pour votre modèle, vous pouvez obtenir l'entrée directement à partir de la propriété
 const { personne } = Astro.props;
 const { Content } = await render(personne);
+const profession = personne.data.profession && [
+    ...new Set(personne.data.profession),
+]
 ---
 
 <Layout pageTitle="Détails de la personne">
