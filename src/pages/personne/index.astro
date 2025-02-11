@@ -7,10 +7,10 @@ const personne = await getCollection("personne");
 
 <Layout pageTitle="Liste des personnes">
   <h1>Liste des personnes</h1>
-  <ul class="flex space-y-2 bg-blue-100 p-2 rounded-lg">
+  <ul class="flex space-y-2 p-2 rounded-lg">
     {
       personne.map((personne) => (
-        <li class="p-2 m-6 bg-white rounded shadow hover:bg-gray-100">
+        <li class="p-2 m-6 bg-gray-200 rounded shadow hover:bg-gray-100">
           <a
             href={`/personne/${personne.id}`}
             class="text-blue-500 hover:underline"
