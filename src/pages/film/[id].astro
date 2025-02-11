@@ -1,10 +1,12 @@
 ---
-import { getCollection, render } from "astro:content";
 import Layout from "@layouts/Layout.astro";
+import { getEntry, getEntries } from "astro:content";
+import { getCollection, render } from "astro:content";
 import { formatDate } from "src/helpers";
+
 export async function getStaticPaths() {
-  const posts = await getCollection("film");
-  return posts.map((film) => ({
+  const film = await getCollection("film");
+  return film.map((film) => ({
     params: { id: film.id },
     props: { film },
   }));
@@ -12,29 +14,56 @@ export async function getStaticPaths() {
 
 const { film } = Astro.props;
 const { Content } = await render(film);
+const realisateur =
+  film.data.realisateur && (await getEntry(film.data.realisateur));
+
+const scenaristes =
+  film.data.scenaristes && (await getEntries(film.data.scenaristes));
+
+const roles =
+  film.data.roles &&
+  (await Promise.all(
+    film.data.roles.map(async (r) => ({
+      role: r.role,
+      acteur: await getEntry(r.acteur),
+    }))
+  ));
 ---
 
-<Layout pageTitle="Détails du film">
-  <div class="prose lg:prose-xl mx-auto">
-    <h1 class="text-6xl font-bold mb-4">Fiche de {film.data.titre}</h1>
-    <p class="text-lg">
-      <span class="font-semibold">Titre</span>
-      {film.data.titre}
-    </p>
+<Layout pageTitle={`Fiche du film ${film.data.titre}`}>
+  <section class="mx-8">
+    <h1>{film.data.titre}</h1>
+    <p>Date de sortie : {formatDate(film.data.dateSortie)}</p>
+    {realisateur && <p> Réalisateur : {realisateur.data.nom}</p>}
+    {
+      scenaristes && (
+        <p>
+          {" "}
+          Scénaristes :{" "}
+          {scenaristes
+            .map((s) => s.data.nom)
+            .join(", ")
+            .replace(/, ([^,]*)$/, " et $1")}
+        </p>
+      )
+    }
+    {
+      roles && (
+        <>
+          <h2>Acteurs</h2>
+          <ul>
+            {roles.map(({ role, acteur }) => (
+              <li>
+                <strong>{role}</strong>  {acteur && <>: <a href={`/personne/${acteur.id}`}>{acteur?.data.nom}</a></>}
+              </li>
+            ))}
+          </ul>
+        </>
+      )
+    }
 
-    <p class="text-lg">
-      <span class="font-semibold">Date de sortie :</span>
-      {formatDate(film.data.dateSortie)}
-    </p>
-
-  <p class="text-lg">
-    <span class="font-semibold">Réalisateur</span>
-    {film.data.realisateur}
-  </p>
-    <div class="mt-6">
-      <div class="prose">
-        <Content />
-      </div>
+    <div class="prose">
+      <Content />
     </div>
-  </div>
+  </section>
 </Layout>
