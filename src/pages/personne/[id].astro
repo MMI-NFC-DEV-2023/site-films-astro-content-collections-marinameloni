@@ -14,13 +14,13 @@ export async function getStaticPaths() {
 const { personne } = Astro.props;
 const { Content } = await render(personne);
 const profession = personne.data.profession && [
-    ...new Set(personne.data.profession),
-]
+  ...new Set(personne.data.profession),
+];
 ---
 
 <Layout pageTitle="Détails de la personne">
   <div class="prose lg:prose-xl mx-auto">
-    <h1 class="text-6xl font-bold mb-4 ">Fiche de {personne.data.nom}</h1>
+    <h1 class="text-6xl font-bold mb-4">Fiche de {personne.data.nom}</h1>
     <p class="text-lg">
       <span class="font-semibold">Nationalité :</span>
       {personne.data.nationalite}
@@ -41,13 +41,21 @@ const profession = personne.data.profession && [
       <span class="font-semibold">Lieu de naissance :</span>
       {personne.data.lieuNaissance}
     </p>
-    {personne.data.profession && (
-      <p class="text-lg">
-        <span class="font-semibold">Profession :</span> {personne.data.profession.join(", ")}</p>
-    )}
+    {
+      personne.data.profession && (
+        <p class="text-lg">
+          <span class="font-semibold">Profession :</span>
+          {personne.data.profession.length > 1
+            ? personne.data.profession.slice(0, -1).join(", ") +
+              " et " +
+              personne.data.profession.slice(-1)
+            : personne.data.profession[0]}
+        </p>
+      )
+    }
     <div class="mt-6">
       <div class="prose">
-          <Content />
+        <Content />
       </div>
     </div>
   </div>
