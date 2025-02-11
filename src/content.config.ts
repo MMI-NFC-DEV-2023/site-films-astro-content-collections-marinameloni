@@ -13,6 +13,7 @@ const personne = defineCollection({
       .array(
         z.enum([
           "acteur",
+          "actrice",
           "réalisateur",
           "scénariste",
           "producteur",
@@ -30,4 +31,12 @@ const personne = defineCollection({
   }),
 });
 
-export const collections = { personne };
+const film = defineCollection({
+  loader: glob({ base: "src/data/film", pattern: "**/*.md" }),
+  schema: z.object({
+    titre: z.string(),
+    dateSortie: z.date(),
+  }),
+})
+
+export const collections = { personne, film };
