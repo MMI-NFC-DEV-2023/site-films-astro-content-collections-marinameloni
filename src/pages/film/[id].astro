@@ -3,6 +3,7 @@ import Layout from "@layouts/Layout.astro";
 import { getEntry, getEntries } from "astro:content";
 import { getCollection, render } from "astro:content";
 import { formatDate } from "src/helpers";
+import LinkPersonne from "@components/LinkPersonne.astro";
 
 export async function getStaticPaths() {
   const film = await getCollection("film");
@@ -34,16 +35,14 @@ const roles =
   <section class="mx-8">
     <h1>{film.data.titre}</h1>
     <p>Date de sortie : {formatDate(film.data.dateSortie)}</p>
-    {realisateur && <p> Réalisateur : {realisateur.data.nom}</p>}
+    {realisateur && <p> Réalisateur : <LinkPersonne personne={realisateur}></p>}
     {
       scenaristes && (
         <p>
           {" "}
           Scénaristes :{" "}
           {scenaristes
-            .map((s) => s.data.nom)
-            .join(", ")
-            .replace(/, ([^,]*)$/, " et $1")}
+            .map((s) => <LinkPersonne personne={s}></LinkPersonne>)}
         </p>
       )
     }
