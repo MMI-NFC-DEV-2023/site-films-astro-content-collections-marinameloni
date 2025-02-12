@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import LinkFilm from "@components/LinkFilm.astro";
+import ListeLinkFilm from "@components/ListeLinkFilm.astro";
 import Layout from "@layouts/Layout.astro";
 import { formatDate } from "src/helpers";
 // 1. Génére un nouveau chemin pour chaque entrée de collection
@@ -57,9 +58,9 @@ const filmsRealises = [...(await getCollection("film"))].filter(
       filmsRealises.length > 0 && (
         <>
           <h2>Films réalisés</h2>
-          {filmsRealises.map((film) => (
-            <LinkFilm {...film} />
-          ))}
+          <p>
+            <ListeLinkFilm film={filmsRealises} />
+          </p>
         </>
       )
     }
