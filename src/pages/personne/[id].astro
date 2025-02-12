@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from "astro:content";
+import LinkFilm from "@components/LinkFilm.astro";
 import Layout from "@layouts/Layout.astro";
 import { formatDate } from "src/helpers";
 // 1. Génére un nouveau chemin pour chaque entrée de collection
@@ -16,10 +17,13 @@ const { Content } = await render(personne);
 const profession = personne.data.profession && [
   ...new Set(personne.data.profession),
 ];
+const filmsRealises = [...(await getCollection("film"))].filter(
+  (film) => film.data?.realisateur?.id === personne.id
+);
 ---
 
 <Layout pageTitle="Détails de la personne">
-  <div class="prose lg:prose-xl mx-auto ">
+  <div class="prose lg:prose-xl mx-auto">
     <h1 class="text-6xl font-bold mb-4">Fiche de {personne.data.nom}</h1>
     <p class="text-lg">
       <span class="font-semibold">Nationalité :</span>
@@ -44,13 +48,19 @@ const profession = personne.data.profession && [
     {
       personne.data.profession && (
         <p class="text-lg">
-          <span class="font-semibold">Profession :</span>
-          {personne.data.profession.length > 1
-            ? personne.data.profession.slice(0, -1).join(", ") +
-              " et " +
-              personne.data.profession.slice(-1)
-            : personne.data.profession[0]}
+          Profession{profession.length > 1 && <>s</>} :{" "}
+          {profession.join(", ").replace(/, ([^,]*)$/, " et $1")}
         </p>
+      )
+    }
+    {
+      filmsRealises.length > 0 && (
+        <>
+          <h2>Films réalisés</h2>
+          {filmsRealises.map((film) => (
+            <LinkFilm {...film} />
+          ))}
+        </>
       )
     }
     <div class="mt-6">
